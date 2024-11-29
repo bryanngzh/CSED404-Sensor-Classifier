@@ -43,6 +43,7 @@ def train_and_evaluate(data_file, model_file):
     print(f"Accuracy: {accuracy}%")
 
     # Confusion Matrix
+    # TODO: use seaborn heatmap instead. 
     cm = confusion_matrix(test_labels, predicted_labels)
     print(cm)
 
@@ -50,7 +51,7 @@ def train_and_evaluate(data_file, model_file):
 
 # Main Execution
 if __name__ == "__main__":
-    data_file = "data/data.txt"  
+    data_file = "data/scaled_data.txt"  
     model_file = "activity_model.model"
 
     # Train and evaluate the model

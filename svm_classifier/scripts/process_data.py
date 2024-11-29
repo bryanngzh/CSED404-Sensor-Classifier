@@ -15,13 +15,32 @@ def extract_features(window):
     return np.concatenate((linear_features, gravity_features, gyro_features))
 
 def extract_features_from_sensor_data(sensor_data):
-    # Calculate mean and variance for the sensor data
-    mean = np.mean(sensor_data, axis=0)
-    var = np.var(sensor_data, axis=0)
+    # Convert sensor data to lists for manual calculation
+    sensor_data_list = sensor_data.values.tolist()
+    
+    sumX, sumY, sumZ = 0, 0, 0
+    sumSqX, sumSqY, sumSqZ = 0, 0, 0
+    n = len(sensor_data)
 
-    feature_vector = np.concatenate([mean, var])
+    for values in sensor_data_list:
+        sumX += values[0]
+        sumY += values[1]
+        sumZ += values[2]
 
-    return feature_vector
+        sumSqX += values[0] * values[0]
+        sumSqY += values[1] * values[1]
+        sumSqZ += values[2] * values[2]
+
+    meanX = sumX / n
+    meanY = sumY / n
+    meanZ = sumZ / n
+
+    varX = (sumSqX / n) - (meanX * meanX)
+    varY = (sumSqY / n) - (meanY * meanY)
+    varZ = (sumSqZ / n) - (meanZ * meanZ)
+    
+    # Combine mean and variance into a feature vector
+    return [meanX, varX, meanY, varY, meanZ, varZ]
 
 def process_data(folder_path):
     linear_data = pd.read_csv(folder_path + "linear.csv")
@@ -38,12 +57,7 @@ def process_data(folder_path):
         features.append(extract_features(window))
         labels.append(data.iloc[i, 0]) 
 
-        # Feature scaling (-1, 1)
-        scaler = MinMaxScaler(feature_range=(-1, 1))
-        scaler.fit(features)
-        features_scaled = scaler.transform(features)
-
-    return features_scaled, labels
+    return features, labels
 
 # Main processing loop
 data_dir = "data/raw"

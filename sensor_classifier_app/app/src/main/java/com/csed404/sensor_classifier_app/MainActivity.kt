@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var gravity: Sensor? = null
 
     private var isClassifying = false
-    private val sensorDataBuffer = SensorDataBuffer(windowSize = 200) // 2s @ 100Hz
+    private val sensorDataBuffer = SensorDataBuffer(200, 100) // 2s @ 100Hz
     private val featureExtractor = FeatureExtractor()
     private lateinit var classifier: SVMClassifier
 
@@ -69,22 +69,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         gyroscope?.let { sensorManager.registerListener(this, it, 10000) }
         gravity?.let { sensorManager.registerListener(this, it, 10000) }
 
-//        coroutineScope.launch {
-//            while (isClassifying) {
-//                if (sensorDataBuffer.isReady()) {
-//                    val features = featureExtractor.extract(sensorDataBuffer)
-//                    val predictedActivity = classifier.predict(features)
-//
-//                    withContext(Dispatchers.Main) {
-//                        classifiedActivityTextView.text = "Current Activity: $predictedActivity"
-//                    }
-//
-//                    sensorDataBuffer.advanceWindow()
-//                }
-//                delay(1000) // Stride Δ = 1.0s
-//            }
-//        }
-
         coroutineScope.launch {
             try {
                 while (isClassifying) {
@@ -115,7 +99,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                                 classifiedActivityTextView.text = "Current Activity: $predictedActivity"
                             }
 
-                            sensorDataBuffer.advanceWindow()
                         } else {
                             Log.d("ClassificationLoop", "Sensor buffer not ready")
                         }
@@ -123,14 +106,13 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                         delay(1000) // Stride Δ = 1.0s
                     } catch (iterationE: Exception) {
                         Log.e("ClassificationLoop", "Error in classification iteration", iterationE)
-                        delay(1000) // Prevent tight error loop
+                        delay(1000)
                     }
                 }
             } catch (e: Exception) {
                 Log.e("ClassificationLoop", "Unhandled exception in classification loop", e)
             }
         }
-
     }
 
     private fun stopClassification() {
