@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var classifiedActivityTextView: TextView
     private lateinit var startStopButton: Button
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +56,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             if (isClassifying) {
                 stopClassification()
             } else {
+                if (coroutineScope.isActive.not()) {
+                    coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+                }
                 startClassification()
             }
         }
