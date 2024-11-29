@@ -11,7 +11,6 @@ def extract_features(window):
     linear_features = extract_features_from_sensor_data(window.iloc[:, 2:5])
     gravity_features = extract_features_from_sensor_data(window.iloc[:, 7:10])
     gyro_features = extract_features_from_sensor_data(window.iloc[:, 12:15])
-
     # Combine features from all sensors
     return np.concatenate((linear_features, gravity_features, gyro_features))
 
@@ -19,22 +18,6 @@ def extract_features_from_sensor_data(sensor_data):
     # Calculate mean and variance for the sensor data
     mean = np.mean(sensor_data, axis=0)
     var = np.var(sensor_data, axis=0)
-
-    # # Assuming sensor_data is a 2D array with shape (num_samples, num_sensors)
-    # num_bins = 10  # Adjust the number of bins as needed
-    # hist, bin_edges = np.histogram(sensor_data, bins=num_bins, density=True)
-    # prob_dist = hist / np.sum(hist)
-
-    # # Calculate entropy
-    # entropy = -np.sum(prob_dist * np.log2(prob_dist))
-
-    # # Assuming sensor_data is a 2D array with shape (num_samples, num_sensors)
-    # fft_data = np.fft.fft(sensor_data, axis=0)
-    # energy = np.mean(np.abs(fft_data)**2, axis=0)
-
-    # corr_matrix = np.corrcoef(sensor_data.T)
-
-    # feature_vector = np.concatenate([mean, var, np.reshape(entropy, (1,)), energy, corr_matrix.flatten()])
 
     feature_vector = np.concatenate([mean, var])
 
@@ -46,7 +29,7 @@ def process_data(folder_path):
     gyro_data = pd.read_csv(folder_path + "gyro.csv") 
 
     data = pd.concat([linear_data, gravity_data, gyro_data], axis=1)
-
+    
     # Extract features with stride and window size
     features = []
     labels = []

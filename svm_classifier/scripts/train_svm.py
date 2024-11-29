@@ -1,6 +1,7 @@
 from libsvm.svm import *
 from libsvm.svmutil import *
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 
 # Step 1: Load dataset from a single file
 def load_data(filename):
@@ -19,7 +20,7 @@ def load_data(filename):
 def train_and_evaluate(data_file, model_file):
     # Load the dataset
     labels, features = load_data(data_file)
-    
+
     # Split the dataset into 80% training and 20% testing
     train_labels, test_labels, train_features, test_features = train_test_split(
         labels, features, test_size=0.2, random_state=42, stratify=labels
@@ -35,10 +36,16 @@ def train_and_evaluate(data_file, model_file):
     svm_save_model(model_file, model)
     print(f"Model saved as {model_file}")
     
+
     # Evaluate the model
     print("Evaluating the model...")
-    predicted_labels, accuracy, _ = svm_predict(test_labels, test_features, model)
+    predicted_labels, accuracy, _ = svm_predict(test_labels, test_features, model)    
     print(f"Accuracy: {accuracy}%")
+
+    # Confusion Matrix
+    cm = confusion_matrix(test_labels, predicted_labels)
+    print(cm)
+
     return model
 
 # Main Execution
