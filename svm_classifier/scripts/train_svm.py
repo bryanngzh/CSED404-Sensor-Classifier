@@ -2,6 +2,9 @@ from libsvm.svm import *
 from libsvm.svmutil import *
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Step 1: Load dataset from a single file
 def load_data(filename):
@@ -43,9 +46,18 @@ def train_and_evaluate(data_file, model_file):
     print(f"Accuracy: {accuracy}%")
 
     # Confusion Matrix
-    # TODO: use seaborn heatmap instead. 
     cm = confusion_matrix(test_labels, predicted_labels)
     print(cm)
+
+    plt.figure(figsize=(10,7))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                xticklabels=np.unique(test_labels), 
+                yticklabels=np.unique(test_labels))
+    plt.title('Confusion Matrix')
+    plt.xlabel('Predicted Label')
+    plt.ylabel('True Label')
+    plt.tight_layout()
+    plt.show()
 
     return model
 

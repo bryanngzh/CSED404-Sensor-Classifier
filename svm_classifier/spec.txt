@@ -1,0 +1,15 @@
+Machine Learning Implementation Specification
+1. Classifier Details & Library Used
+Classifier Type: Support Vector Machine (SVM)
+Library: LibSVM
+Library Repository: https://www.csie.ntu.edu.tw/~cjlin/libsvm/
+
+2. List of Features
+- Mean
+- Variance
+
+3. List of Hyperparameters
+stride = 100 # 1s
+window_size = 200 # 2s 
+param = svm_parameter('-t 2 -c 1 -g 0.5')  # RBF kernel, C=1, gamma=0.5
+
